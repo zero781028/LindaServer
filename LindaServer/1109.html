@@ -1,0 +1,871 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>無標題文件</title>
+    <link rel="stylesheet" href="themes/a.min.css" />
+    <link rel="stylesheet" href="themes/b.min.css" />
+    <link rel="stylesheet" href="themes/c.min.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile.structure-1.3.2.min.css" />
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+
+    <style>
+        .title {
+            color: #333;
+            font-size: 18px;
+        }
+    </style>
+    <style>
+        .content {
+            color: #FBBBBBB;
+            font-size: 15px;
+        }
+    </style>
+    <style>
+        .price {
+            color: #F30;
+            font-size: 8px;
+        }
+    </style>
+    <style>
+        .time {
+            color: #333;
+            font-size: 6px;
+        }
+    </style>
+    <style>
+        .rss {
+            color: #0033CC;
+            font-size: 4px;
+        }
+    </style>
+
+    <style type="text/css">
+        * {
+            font-family: 微軟正黑體,標楷體;
+            font-size: 13px;
+        }
+
+        #contact-form label {
+            display: block;
+            width: 100px;
+            float: left;
+            font-size: 1.2em;
+        }
+
+        .abgne_product_arrow_silder {
+            width: 300px;
+            height: 200px;
+            position: relative;
+            border: 1px solid #ccc;
+            overflow: hidden;
+        }
+
+            .abgne_product_arrow_silder ul, .abgne_product_arrow_silder ul li {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+            }
+
+                .abgne_product_arrow_silder ul li {
+                    position: absolute;
+                    z-index: 1;
+                }
+
+                    .abgne_product_arrow_silder ul li.selected {
+                        z-index: 99;
+                    }
+
+        .prev {
+            background: url(prev.gif) no-repeat;
+            width: 38px;
+            height: 48px;
+            position: absolute;
+            left: -48px; /* 先藏在左邊 */
+            top: 101px; /* (區塊高-圖片高) / 2 */
+            z-index: 100;
+        }
+
+        .next {
+            background: url(next.gif) no-repeat;
+            width: 38px;
+            height: 48px;
+            position: absolute;
+            right: -48px; /* 先藏在右邊 */
+            top: 101px; /* (區塊高-圖片高) / 2 */
+            z-index: 100;
+        }
+    </style>
+    <style type='text/css'>
+        .ui-footer .ui-btn-right {
+        }
+
+        .articleContent > table > tbody > tr > td > font > br {
+            display: none;
+        }
+
+            .articleContent > table > tbody > tr > td > font > br + div {
+                display: none;
+            }
+
+        .articleContent * {
+            font-size: medium !important;
+        }
+    </style>
+
+
+    <script>
+        var oStorage = window.localStorage;
+        var momid = oStorage.momid;
+        var pic;
+        var pic2;
+        //book不知
+        function D_book() {
+            var content = "";
+            $.ajax({
+                url: 'http://192.192.152.118/watchbaby/phpServerBook.php',
+                type: 'post',
+                dataType: 'json',
+                error: function () {
+                    alert("GetGPSfromPHP ERROR");
+                },
+                success: function (data) {
+                    for (i = 0; i < data.length; i++) {
+                        content = '<li><a class="book" value="' + data[i].bookid + '"><img src="http://192.192.152.118/watchbaby/upload/' + data[i].picture + '">' +
+                        '<p class="title">' + data[i].bname + '</p>' +
+                        '<p class="content">' + data[i].content + '</p>' +
+                        '<p class="time">' + data[i].date + '</p>' +
+                        '</a></li>';
+                        //$("#bcontent").html(content);
+                        //$("#bdatetime").html(mydatetime);
+                        $("#pg8ul").append(content);
+                    }
+                    $("#pg8ul").listview("refresh");
+                    $('.book').click(function () {
+                        bookid = $(this).attr("value");
+                        $.mobile.changePage("#page10");
+
+                        $.ajax({
+                            url: 'http://192.192.152.118/watchbaby/bookpic.php',
+                            type: 'post',
+                            dataType: 'json',
+                            data: { bookid: bookid },
+                            error: function () {
+                                alert("GetGPSfromPHP ERROR11111");
+                            },
+                            success: function (data) {
+                                $('#contentb').html("");
+                                $('#bookpic').attr("src", "");
+                                $('#bookpic').attr("src", "http://192.192.152.118/watchbaby/upload/" + data.pic);
+                                $("#contentb").append('<p>書名:' + data.title + '</p><p>作者:' + data.user + '</p><p>日期:' + data.date + '</p><p>內容:' + data.content + '</p>');
+                                $('#conb').trigger('create');
+                            }
+                        })
+
+                        $.ajax({
+                            url: 'http://192.192.152.118/watchbaby/booktest.php',
+                            type: 'post',
+                            dataType: 'json',
+                            data: { bookid: bookid },
+                            error: function () {
+                                alert("GetGPSfromPHP ERROR11111");
+                            },
+                            success: function (data) {
+                                $('#buttonList').html('');
+                                $('#mean').val("");
+                                for (i = 0; i < data.length; i++) {
+                                    $('#buttonList').append('<li><a><h1>' + data[i].mean + '</h1><p class="detail">留言者:' + data[i].momid + '</p><p>時間:' + data[i].date + ' ' + data[i].time + '</p></a></li>');
+                                }
+                                $("#buttonList").listview('refresh');
+                            }//success end
+                        })
+                    })
+                    $("form").submit(function () {
+                        var mean = $("#mean").val();
+
+                        $.post('http://192.192.152.118/watchbaby/booktest_2.php',
+                          {
+                              mean: mean,
+                              bookid: bookid,
+                              momid: momid
+                          },
+                            function (msg) {
+                                if (msg.name = "4")
+                                    alert("留言成功")
+                                $("#load").show();
+                                window.location.replace('listnew3.html#page8')
+
+                            })
+                        $("#load").hide();
+                    })
+
+                }
+            });
+        }//book不知end
+
+        //美味廚房
+        function D_food() {
+            var content = "";
+            $.ajax({
+                url: 'http://192.192.152.118/watchbaby/phpServerFood.php',
+                type: 'post',
+                dataType: 'json',
+                error: function () {
+                    alert("GetGPSfromPHP ERROR");
+                },
+                success: function (data) {
+
+                    for (i = 0; i < data.length; i++) {
+                        content = '<li><a class="food" value="' + data[i].foodid + '"><img src="http://192.192.152.118/watchbaby/upload/' + data[i].picture + '">' +
+                        '<p class="title">' + data[i].name + '</p>' +
+                        //content = data[i].content+'<br/>';
+                        //mydatetime += data[i].datetime+'<br/>';
+                        '<p class="content">' + data[i].user + '</p>' +
+                        '<p class="time">' + data[i].date + '</p>' +
+                        '</a></li>';
+                        //$("#bcontent").html(content);
+                        //$("#bdatetime").html(mydatetime);
+                        $("#pg6ul").append(content);
+
+                    }
+                    $("#pg6ul").listview("refresh");
+                    $('.food').click(function () {
+                        $('#num').val(1);
+                        foodid = $(this).attr("value");
+                        //alert(foodid)
+                        $.mobile.changePage("#page11");
+                        $.ajax({
+                            url: 'http://192.192.152.118/watchbaby/foodpic.php',
+                            type: 'post',
+                            dataType: 'json',
+                            data: { foodid: foodid },
+                            error: function () {
+                                alert("GetGPSfromPHP ERROR11111");
+                            },
+                            success: function (data) {
+                                $('#contentf').html("");
+                                $('#foodpic').attr("src", "");
+                                $('#foodpic2').attr("src", "");
+                                $('#foodpic').attr("src", "http://192.192.152.118/watchbaby/upload/" + data.pic);
+                                $('#foodpic2').attr("src", "http://192.192.152.118/watchbaby/upload/" + data.pic2);
+                                pic = data.pic;
+                                pic2 = data.pic2;
+                                $("#contentf").append('<p>標題:' + data.title + '</p><p>作者:' + data.user + '</p><p>日期:' + data.date + '</p><p>內容:' + data.content + '</p>');
+                                $('#conf').trigger('create');
+                                var $silder = $('.abgne_product_arrow_silder'),
+                $li = $('ul li', $silder),
+                arrowWidth = 48 * -1,
+                arrowOpacity = .3,
+                $arrows = $('<a href="#" class="prev"></a><a href="#" class="next"></a>').css('opacity', arrowOpacity),
+                $prev = $arrows.filter('.prev'),
+                $next = $arrows.filter('.next'),
+                fadeSpeed = 400;
+
+                                // 把箭頭超連結加到 $silder 中
+                                // 並幫 $silder 加上 hover 事件
+                                $silder.append($arrows).hover(function () {
+                                    var no = $li.filter('.selected').index();
+                                    arrowAction(no > 0 ? 0 : arrowWidth, no < $li.length - 1 ? 0 : arrowWidth);
+                                }, function () {
+                                    arrowAction(arrowWidth, arrowWidth);
+                                });
+
+                                // 當滑鼠點擊左右箭頭時
+                                $arrows.click(function () {
+                                    // 先取出目前顯示的 li 及其排行
+                                    var $selected = $li.filter('.selected'),
+                                        no = $selected.index();
+
+                                    // 判斷是要上一張還是下一張
+                                    no = this.className == 'prev' ? no - 1 : no + 1;
+                                    $li.eq(no).addClass('selected').siblings().removeClass('selected');
+
+                                    arrowAction(no > 0 ? 0 : arrowWidth, no < $li.length - 1 ? 0 : arrowWidth);
+
+                                    return false;
+                                }).focus(function () {
+                                    this.blur();
+                                });
+
+                                // 控制左右箭頭顯示或隱藏
+                                function arrowAction(l, r) {
+                                    $prev.stop().css({ left: l });
+                                    $next.stop().css({ right: r });
+                                }
+                            }
+                        })
+
+                        //show
+                        $.ajax({
+                            url: 'http://192.192.152.118/watchbaby/foodtest.php',
+                            type: 'post',
+                            dataType: 'json',
+                            data: { foodid: foodid },
+                            error: function () {
+                                alert("GetGPSfromPHP ERROR11111");
+                            },
+                            success: function (data) {
+                                $('#buttonListf').html('');
+                                $('#meanf').val("");
+                                for (i = 0; i < data.length; i++) {
+                                    $('#buttonListf').append('<li><a><h1>' + data[i].mean + '</h1><p class="detail">留言者:' + data[i].momid + '</p><p>時間:' + data[i].date + ' ' + data[i].time + '</p></a></li>');
+                                }
+                                $("#buttonListf").listview('refresh');
+                            }//success end
+                        })
+                    })
+                    //留言
+                    $("#submitf").click(function () {
+                        var mean = $("#meanf").val();
+
+                        $.post('http://192.192.152.118/watchbaby/foodtest_2.php',
+                          {
+                              mean: mean,
+                              foodid: foodid,
+                              momid: momid
+                          },
+                            function (msg) {
+                                if (msg.name = "4")
+                                    alert("留言成功")
+                                $("#load").show();
+                                window.location.replace('listnew3.html#page6')
+
+                            })
+                        $("#load").hide();
+                    })
+                }
+            });
+
+        }//美味廚房end
+
+
+        //舊物市集  
+        function D_market() {
+            var content = "";
+            $.ajax({
+                url: 'http://192.192.152.118/watchbaby/phpServerD.php',
+                type: 'post',
+                dataType: 'json',
+                error: function () {
+                    alert("GetGPSfromPHP ERROR");
+                },
+                success: function (data) {
+                    for (i = 0; i < data.length; i++) {
+                        content = '<li><a  class="thing" value="' + data[i].thingid + '"><img src="http://192.192.152.118/watchbaby/upload/' + data[i].picture + '">' +
+                        '<p class="title">' + data[i].content + '</p>' +
+                        '<p class="price">' + "拍賣價格:" +
+                        //content = data[i].content+'<br/>';
+                        //mydatetime += data[i].datetime+'<br/>';
+                       data[i].money + '</p>' +
+                        '<p class="time">' + data[i].date + '</p>' +
+                        '</a></li>';
+                        //$("#bcontent").html(content);
+                        //$("#bdatetime").html(mydatetime);
+                        $("#pg7ul").append(content);
+                    }
+                    $("#pg7ul").listview("refresh");
+                    $('.thing').click(function () {
+                        thingid = $(this).attr("value");
+                        //alert(foodid)
+                        $.mobile.changePage("#page12");
+
+                        $.ajax({
+                            url: 'http://192.192.152.118/watchbaby/thingpic.php',
+                            type: 'post',
+                            dataType: 'json',
+                            data: { thingid: thingid },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                                alert(XMLHttpRequest.readyState + XMLHttpRequest.status + XMLHttpRequest.responseText);
+                            },
+                            success: function (data) {
+                                $('#contentt').html("");
+                                $('#thingpic').attr("src", "");
+                                $('#thingpic').attr("src", "http://192.192.152.118/watchbaby/upload/" + data.pic);
+                                $("#contentt").append('<p>作者:' + data.user + '</p><p>日期:' + data.date + '</p><p>商品描述:' + data.content + '</p><p>價格:' + data.money + '</p>');
+                                $('#conb').trigger('create');
+                            }
+                        })
+
+                        //show
+                        $.ajax({
+                            url: 'http://192.192.152.118/watchbaby/thingtest.php',
+                            type: 'post',
+                            dataType: 'json',
+                            data: { thingid: thingid },
+                            error: function () {
+                                alert("GetGPSfromPHP ERROR11111");
+                            },
+                            success: function (data) {
+                                $('#buttonListt').html('');
+                                $('#meant').val("");
+                                for (i = 0; i < data.length; i++) {
+                                    $('#buttonListt').append('<li><a><h1>' + data[i].mean + '</h1><p class="detail">留言者:' + data[i].momid + '</p><p>時間:' + data[i].date + ' ' + data[i].time + '</p></a></li>');
+                                }
+                                $("#buttonListt").listview('refresh');
+                            }//success end
+                        })
+                    })
+                    //留言
+                    $("#submitt").click(function () {
+                        var mean = $("#meant").val();
+
+                        $.post('http://192.192.152.118/watchbaby/thingtest_2.php',
+                          {
+                              mean: mean,
+                              thingid: thingid,
+                              momid: momid
+                          },
+                            function (msg) {
+                                if (msg.name = "4")
+                                    alert("留言成功")
+                                $("#load").show();
+                                window.location.replace('listnew3.html#page7')
+                            })
+                        $("#load").hide();
+                    })
+
+                }
+            });
+        }
+
+
+
+        function ShowMsg() {
+            var title = "";
+            var content = "";
+            var mydatetime = "";
+            var publisher = "";
+            $.ajax({
+                url: 'http://192.192.152.118/watchbaby/phpServerN.php',
+                type: 'post',
+                dataType: 'json',
+                error: function () {
+                    alert("GetGPSfromPHP ERROR");
+                },
+                success: function (data) {
+
+                    for (i = 0; i < data.length; i++) {
+                        content = '<li><a>' +
+                                  '<p class="title">' + data[i].title + '</p>' +
+                        //content = data[i].content+'<br/>';
+                        //mydatetime += data[i].datetime+'<br/>';
+                                  '<p class="content">' + data[i].content + '</p>' +
+                  '<p class="time">' + data[i].datetime + '</p>' +
+                  '</a></li>';
+                        //$("#bcontent").html(content);
+                        //$("#bdatetime").html(mydatetime);
+                        $("#pg2ul").append(content);
+
+                    }
+                }
+            });
+        }
+
+    </script>
+
+</head>
+<body>
+    <div id="load">
+        <img src="load.jpg" style="display: block; margin: auto; width: 300px; height: 300px; top: 60%; left: 50%;"></img></div>
+    <div data-role="page" id="page" data-theme="a">
+        <script>
+            $("#page").on('pageinit', function (event) {
+                ShowMsg();
+
+            })
+        </script>
+        <div data-role="header" data-theme="a">
+            <h1>討論區</h1>
+        </div>
+
+        <div data-role="content" data-theme="a">
+            <ul data-role="listview">
+                <li><a href="#page2" data-transition="slide">最新公告</a></li>
+                <li><a href="#page3" data-transition="slide">好站連結</a></li>
+                <li><a href="#page5" data-transition="slide">討論區</a></li>
+                <li><a href="#page4" data-transition="slide">BBSNews</a></li>
+            </ul>
+        </div>
+        <div data-role="footer" data-position="fixed" data-theme="b">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="Untitled-1.html" rel="external" data-icon="home">首頁</a></li>
+                    <li><a href="ma.html" rel="external" data-icon="star">定位</a></li>
+                    <li><a href="all.html" rel="external" data-icon="star">行事曆</a></li>
+                    <li><a href="choose.html" rel="external" data-icon="star">Aboutbaby</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div data-role="page" id="page2" data-theme="a">
+
+        <div data-role="header" data-theme="a">
+            <h1 class="p">最新公告</h1>
+            <a href="#page" data-role="button" data-icon="back" data-iconpos="left" data-mini="true">返回</a>
+        </div>
+        <div data-role="content">
+
+            <ul data-role="listview" id="pg2ul" data-theme="c">
+            </ul>
+
+        </div>
+        <div data-role="footer" data-position="fixed" data-theme="b">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="Untitled-1.html" rel="external" data-icon="home">首頁</a></li>
+                    <li><a href="ma.html" rel="external" data-icon="star">定位</a></li>
+                    <li><a href="all.html" rel="external" data-icon="star">行事曆</a></li>
+                    <li><a href="choose.html" rel="external" data-icon="star">Aboutbaby</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div data-role="page" id="page3" data-theme="a">
+        <div data-role="header" data-theme="a">
+            <h1>好站連結</h1>
+            <a href="#page" data-role="button" data-icon="back" data-iconpos="left" data-mini="true">返回</a>
+        </div>
+        <div data-role="content">
+
+            <ul data-role="listview" data-filter="true" data-theme="c">
+                <li><a href="http://www.health.gov.tw/Default.aspx?tabid=36" rel="external">
+                    <img src="pic/1.jpg" />
+                    <h1>台北市政府衛生局</h1>
+                    <p class="detail"></p>
+                </a></li>
+
+                <li><a href="http://www.breastfeedingtaiwan.org/" rel="external">
+                    <img src="pic/2.png" />
+                    <h1>台灣母乳哺育聯合學會</h1>
+                    <p class="detail"></p>
+                </a></li>
+
+
+                <li><a href="http://www.howmama.com.tw/" rel="external">
+                    <img src="pic/4.png" />
+                    <h1>howmama好媽媽懷孕交流網</h1>
+                    <p class="detail"></p>
+                </a></li>
+
+                <li><a href="http://www.mombaby.com.tw/" rel="external">
+                    <img src="pic/mombaby.png" />
+                    <h1>媽媽寶寶mombaby</h1>
+                    <p class="detail"></p>
+                </a></li>
+
+                <li><a href="http://www.babyhome.com.tw/" rel="external">
+                    <img src="pic/bh_logo2.gif" />
+                    <h1>BabyHome寶貝家庭親子網</h1>
+                    <p class="detail">完整的媽媽寶寶資訊</p>
+
+                </a></li>
+                <li><a href="http://www.phland.com.tw/family_activities.php" rel="external">
+                    <img src="pic/les.png" />
+                    <h1>Les enphants 麗嬰房</h1>
+                    <p class="detail">親子活動訊息</p>
+                </a></li>
+
+            </ul>
+
+        </div>
+        <div data-role="footer" data-position="fixed" data-theme="b">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="Untitled-1.html" rel="external" data-icon="home">首頁</a></li>
+                    <li><a href="ma.html" rel="external" data-icon="star">定位</a></li>
+                    <li><a href="all.html" rel="external" data-icon="star">行事曆</a></li>
+                    <li><a href="choose.html" rel="external" data-icon="star">Aboutbaby</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <div data-role="page" id="page4" data-theme="a">
+        <div data-role="header" data-theme="a">
+            <a href="#page" data-role="button" data-icon="back" data-iconpos="left" data-mini="true">返回</a>
+            <h1>RSSNews</h1>
+        </div>
+        <div data-role="content">
+            <script src="rss.js"></script>
+
+        </div>
+        <!--
+        <div data-role="header" data-theme="a">
+            <h1>醫療保健</h1>
+        </div>
+        -->
+        <div data-role="content">
+            <input type="radio" name="radio" id="radio_1" value="02" onclick="showRSS()" />
+            <label for="radio_1">醫療保健<a class='rss ui-btn-right'>read more</a></label>
+            <iframe src="rss3-1.html" width="100%"></iframe>
+        </div>
+        <div data-role="footer" data-theme="b">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="Untitled-1.html" rel="external" data-icon="home">首頁</a></li>
+                    <li><a href="ma.html" rel="external" data-icon="star">定位</a></li>
+                    <li><a href="all.html" rel="external" data-icon="star">行事曆</a></li>
+                    <li><a href="choose.html" rel="external" data-icon="star">Aboutbaby</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <div data-role="page" id="page5" data-theme="a">
+
+        <div data-role="header" data-theme="a">
+            <h1>討論區</h1>
+            <a href="#page" data-role="button" data-icon="back" data-iconpos="left" data-mini="true">返回</a>
+        </div>
+        <div data-role="content" data-theme="c">
+            <ul data-role="listview">
+                <li><a href="#page7" data-transition="slide">舊物市集</a></li>
+                <li><a href="#page6" data-transition="slide">美味廚房</a></li>
+                <li><a href="#page8" data-transition="slide">BOOK不知</a></li>
+            </ul>
+        </div>
+        <div data-role="footer" data-position="fixed" data-theme="b">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="Untitled-1.html" rel="external" data-icon="home">首頁</a></li>
+                    <li><a href="ma.html" rel="external" data-icon="star">定位</a></li>
+                    <li><a href="all.html" rel="external" data-icon="star">行事曆</a></li>
+                    <li><a href="choose.html" rel="external" data-icon="star">Aboutbaby</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div data-role="page" id="page6" data-theme="a">
+        <script>
+            $("#page6").on('pageinit', function (event) {
+
+                D_food();
+
+
+            })
+        </script>
+
+        <div data-role="header" data-theme="a">
+            <h1>美味廚房</h1>
+            <a href="#page5" data-role="button" data-icon="back" data-iconpos="left" data-mini="true">返回</a>
+            <a href="javascript:window.open('d_food1.html','_self');" data-role="button" data-icon="plus" data-iconpos="left" data-mini="true">新增</a>
+
+        </div>
+        <div data-role="content" data-theme="c">
+            <ul data-role="listview" id="pg6ul">
+        </div>
+        <div data-role="footer" data-position="fixed" data-theme="b">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="Untitled-1.html" rel="external" data-icon="home">首頁</a></li>
+                    <li><a href="ma.html" rel="external" data-icon="star">定位</a></li>
+                    <li><a href="all.html" rel="external" data-icon="star">行事曆</a></li>
+                    <li><a href="choose.html" rel="external" data-icon="star">Aboutbaby</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div data-role="page" id="page8" data-theme="a">
+        <script>
+            $("#page8").on('pageinit', function (event) {
+
+                D_book();
+
+
+            })
+        </script>
+
+        <div data-role="header" data-theme="a">
+            <h1>BOOK不知</h1>
+            <a href="#page5" data-role="button" data-icon="back" data-iconpos="left" data-mini="true">返回</a>
+            <a href="javascript:window.open('d_book1.html','_self');" data-role="button" data-icon="plus" data-iconpos="left" data-mini="true">新增</a>
+
+        </div>
+        <div data-role="content" data-theme="c">
+            <ul data-role="listview" id="pg8ul">
+        </div>
+        <div data-role="footer" data-position="fixed" data-theme="b">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="Untitled-1.html" rel="external" data-icon="home">首頁</a></li>
+                    <li><a href="ma.html" rel="external" data-icon="star">定位</a></li>
+                    <li><a href="all.html" rel="external" data-icon="star">行事曆</a></li>
+                    <li><a href="choose.html" rel="external" data-icon="star">Aboutbaby</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div data-role="page" id="page7" data-theme="a">
+        <script>
+            $("#page7").on('pageinit', function (event) {
+
+                D_market();
+
+
+            })
+        </script>
+
+        <div data-role="header" data-theme="a">
+            <h1>舊物市集</h1>
+            <a href="#page5" data-role="button" data-icon="back" data-iconpos="left" data-mini="true">返回</a>
+            <a href="javascript:window.open('d_market1.html','_self');" data-role="button" data-icon="plus" data-iconpos="left" data-mini="true">新增</a>
+        </div>
+        <div data-role="content" data-theme="c">
+
+            <ul data-role="listview" id="pg7ul">
+            </ul>
+
+        </div>
+        <div data-role="footer" data-position="fixed" data-theme="b">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="Untitled-1.html" rel="external" data-icon="home">首頁</a></li>
+                    <li><a href="ma.html" rel="external" data-icon="star">定位</a></li>
+                    <li><a href="all.html" rel="external" data-icon="star">行事曆</a></li>
+                    <li><a href="choose.html" rel="external" data-icon="star">Aboutbaby</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div data-role="page" id="page10" data-theme="a">
+        <div data-role="header">
+            <h1>book</h1>
+            <a href="#page8" rel="external" data-role="button" data-icon="back" data-iconpos="left" data-mini="true">返回</a>
+        </div>
+        <div data-role="content" id="conb" data-theme="c">
+            <img src="" id="bookpic" style="width: 100px; height: 100px;">
+            <div data-role="fieldcontain">
+                <div data-role="collapsible" data-collapsed="true">
+                    <h3>書</h3>
+                    <p id="contentb"></p>
+                </div>
+            </div>
+            <ul data-role="listview" id="buttonList" data-inset="true">
+            </ul>
+
+            <div class="box">
+                <form id="contact-form">
+                    <p>
+                        <label for="mean">留言內容</label>
+                        <textarea id="mean" name="comment" cols="40" rows="8"></textarea>
+                    </p>
+
+                    <p>
+                        <input type="submit" value="送出" id="submit" /></p>
+                </form>
+
+
+            </div>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <h4></h4>
+        </div>
+    </div>
+
+
+    <div data-role="page" id="page11" data-theme="a">
+        <div data-role="header">
+            <h1></h1>
+            <a href="#page6" rel="external" data-role="button" data-icon="back" data-iconpos="left" data-mini="true">返回</a>
+        </div>
+        <div data-role="content" id="conf" data-theme="c">
+
+            <div class="abgne_product_arrow_silder">
+                <ul>
+                    <li class="selected">
+                        <img src="" name="p1" id="foodpic" style="width: 300px; height: 200px;" /></li>
+                    <li>
+                        <img src="" name="p2" id="foodpic2" style="width: 300px; height: 200px;" /></li>
+                </ul>
+            </div>
+
+
+            <div data-role="fieldcontain">
+                <div data-role="collapsible" data-collapsed="true">
+                    <h3>食譜</h3>
+                    <p id="contentf"></p>
+                </div>
+            </div>
+
+            <div data-role="listview" id="buttonListf" data-inset="true">
+            </div>
+
+            <div class="box">
+                <form id="contact-form">
+                    <p>
+                        <label for="meanf">留言內容</label>
+                        <textarea id="meanf" name="comment" cols="40" rows="8"></textarea>
+                    </p>
+
+                    <p>
+                        <input type="submit" value="送出" id="submitf" /></p>
+                </form>
+
+
+            </div>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <h4></h4>
+        </div>
+    </div>
+
+    <div data-role="page" id="page12" data-theme="a">
+        <div data-role="header">
+            <h1></h1>
+            <a href="#page7" rel="external" data-role="button" data-icon="back" data-iconpos="left" data-mini="true">返回</a>
+        </div>
+        <div data-role="content" id="contt" data-theme="c">
+            <img src="" id="thingpic" style="width: 100px; height: 100px;">
+            <div data-role="fieldcontain">
+                <div data-role="collapsible" data-collapsed="true">
+                    <h3>舊物</h3>
+                    <p id="contentt"></p>
+                </div>
+            </div>
+            <div data-role="listview" id="buttonListt" data-inset="true">
+            </div>
+
+            <div class="box">
+                <form id="contact-form">
+                    <p>
+                        <label for="meant">留言內容</label>
+                        <textarea id="meant" name="comment" cols="40" rows="8"></textarea>
+                    </p>
+
+                    <p>
+                        <input type="submit" value="送出" id="submitt" /></p>
+                </form>
+
+
+            </div>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <h4></h4>
+        </div>
+    </div>
+
+    <script language="javascript">
+
+        function showRSS() {
+
+            if (radio.checked) {
+                window.open("rss2.html", "_self");
+            }
+            else if (radio_1.checked) {
+                window.open("rss3.html", "_self");
+            }
+        }
+    </script>
+</body>
+</html>

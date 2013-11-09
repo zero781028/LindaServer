@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=geometry"></script>
+    <title>JShitMobile</title>
+</head>
+<body>
+    <div data-role="page" id="page1">
+        <div data-role="header" data-theme="b">
+            <h3>JShit Mobile</h3>
+            <a data-icon="gear" class="ui-btn-right" onclick="doLogOut();">登出</a>
+        </div>
+        <div data-role="content" data-theme="c">            
+            <script src="Scripts/RssHeader.js"></script>               
+        </div>
+        <div data-role="footer" data-theme="b">
+            <h4>CopyRight</h4>
+        </div>
+    </div>
+
+    <div data-role="dialog" id="logout-dialog">
+        <script>
+            $('#logout-dialog').on('pageshow', function () {
+                $('#TxtUid').val('');
+                //alert('jerry');
+            });
+        </script>
+        <div data-role="header">
+            <h3>LogOut</h3>
+        </div>
+        <div data-role="content">
+            <div class="ui-field-contain">
+                <label for="TxtUid">UID:</label>
+                <input type="text" id="TxtUid" name="TxtUid" />
+                <label for="TxtPwd">Password:</label>
+                <input type="password" id="TxtPwd" name="TxtPwd" />
+                <div data-role="controlgruop" data-type="horizontal">
+                    <a data-role="button" onclick="myTest();">確定</a>
+                    <a data-role="button" data-rel="back">取消</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="Scripts/RssContent.js"></script>
+        
+    <script>
+        function doLogOut() {
+            location.href = '#logout-dialog';
+        }
+        function myTest() {
+            //window.location = "Default.aspx";
+
+            window.location = "Default.aspx";
+        }
+    </script>
+</body>
+</html>
