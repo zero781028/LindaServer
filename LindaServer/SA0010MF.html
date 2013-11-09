@@ -16,7 +16,8 @@
             <a data-icon="gear" class="ui-btn-right" onclick="doLogOut();">登出</a>
         </div>
         <div data-role="content" data-theme="c">            
-            <script src="Scripts/RssHeader.js"></script>               
+            <script src="Scripts/RssHeader.js"></script>           
+            <script src="Scripts/Rss2Header.js"></script>
         </div>
         <div data-role="footer" data-theme="b">
             <h4>CopyRight</h4>
@@ -47,8 +48,8 @@
         </div>
     </div>
     
-    <script src="Scripts/RssContent.js"></script>
-        
+    <script src="Scripts/RssContent.js"></script>  
+            
     <script>
         function doLogOut() {
             location.href = '#logout-dialog';
@@ -59,5 +60,6 @@
             window.location = "Default.aspx";
         }
     </script>
+    <script src="Scripts/Rss2Content.js"></script>
 </body>
 </html>
