@@ -1,0 +1,323 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="shortcut icon" href="../../../Users/user/Desktop/favicon.ico">
+
+
+    <title>Google Map API Test</title>
+
+    <link rel="stylesheet" href="themes/a.min.css" />
+    <link rel="stylesheet" href="themes/b.min.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile.structure-1.3.2.min.css" />
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&libraries=geometry"></script>
+    <script>
+
+        var pos;
+        var map;
+        var ErrFlag;
+        var mark;
+        var watchid;
+        var directDisplay;
+        var directService = new google.maps.DirectionsService();
+        var platitude;
+        var plongitude;
+        var babyA;
+        var platitudeA;
+        var plongtitudeA;
+        var posA;
+        var UID = "linda";
+        var timeoutId;
+        var password;
+        var image_m = "http://192.192.152.118/watchbaby/pic/mom.png";
+        var image_b = "http://192.192.152.118/watchbaby/pic/baby.png";
+
+
+
+        // UID = window.localStorage.user_id;
+        //alert(typeof(posA));
+        function GetGPSfromPHP() {
+            // alert("AJAX START");
+
+            $.ajax({
+                url: 'http://192.192.152.118/watchbaby/phpServerA.php',
+                type: 'get',
+                dataType: 'json',
+                data: { id: UID },
+                error: function () {
+                    //alert("GetGPSfromPHP ERROR");                
+                },
+                success: function (data) {
+                    //alert("GetGPSfromPHP success");                    
+                    plongitudeA = data.LongitudeA;
+                    platitudeA = data.LatitudeA;
+                    posA = new google.maps.LatLng(plongitudeA, platitudeA);
+                    //alert("posA="+posA);              
+                }
+            });
+
+        }
+
+        function InsPHPServer() {
+            //alert("Run AJAX");
+            $.ajax({
+                url: 'http://192.192.152.118/watchbaby/phpServer.php',
+                type: 'post',
+                data: { id: UID, lontitude: platitude, latitude: plongitude },
+                success: function () {
+                    //alert('新增成功')
+                },
+                error: function () {
+                    //alert('新增失敗');
+                }
+            });
+        }
+        function initialize1() {
+
+            //alert("settime");
+            var myOptions = {
+                zoom: 18,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            map = new google.maps.Map(document.getElementById("DivMap"), myOptions);
+            directDisplay = new google.maps.DirectionsRenderer({
+                map: map,
+                preserveViewport: true,
+                draggable: true
+            });
+
+            if (navigator.geolocation) {
+                ErrFlag = true;
+                watchid = navigator.geolocation.getCurrentPosition(watchPositionSuccess1, function () {
+                    handleNoGeolocation(ErrFlag);
+                });
+            }
+            else {
+                ErrFlag = false;
+                handleNoGeolocation(ErrFlag);
+            }
+        }
+        function watchPositionSuccess1(position) {
+            pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            platitude = position.coords.latitude;
+            plongitude = position.coords.longitude;
+
+
+            var mark = new google.maps.Marker({
+                map: null,
+                position: pos,
+                icon: image_b
+            });
+            var mark1 = new google.maps.Marker({
+                map: null,
+                position: posA,
+                icon: image_m
+            });
+
+            // alert("pos:"+pos);
+            // alert("posA:"+posA);
+            var circle = new google.maps.Circle({
+                map: map,
+                radius: parseInt(document.getElementById('radius').value, 10)
+            });
+
+            circle.bindTo('center', mark, 'position');
+            mark.setMap(map);
+            mark1.setMap(map);
+
+            map.setCenter(pos);
+
+            calDistance1(pos);
+            //alert("phpserver1");
+            InsPHPServer();
+            //alert("phpserver2");
+
+
+        }
+        function handleNoGeolocation(err) {
+            if (err) {
+                //     alert("地圖定位失敗");
+            }
+            else {
+                //      alert("瀏覽器不支援Geolocation");
+            }
+        }
+        function calDistance1(pFrom) {
+            //alert("start calDistance");	
+            var start = pFrom;
+            var endA = posA;
+
+            //alert("end="+end);
+
+            //alert("dist="+dist);
+            var distA = (google.maps.geometry.spherical.computeDistanceBetween(pFrom, posA) / 1000).toFixed(2);
+            if (distA >= (parseInt(document.getElementById('radius').value, 10) / 1000)) {
+                alert("定位追蹤\n親愛的寶寶，你的媽媽正在找你唷!");
+            }
+
+            else {
+                //  alert("小於dist");
+            }
+        }
+        function resetMap() {
+            navigator.geolocation.clearWatch(watchid);
+            initialize1();
+        }
+        function settime1() {
+            timeoutId = setInterval("initialize1()", 3000);
+            //playSound();
+        }
+        function choice() {
+            if (chkbabya.value == "on") {
+                //  alert("啟動定位");
+                GetGPSfromPHP();
+                settime1();
+                //initialize1();
+            }
+            else {
+                clearInterval(timeoutId);
+            }
+
+        }
+        function tmp() {
+            pwd();
+            var mydata = window.localStorage.mydata;
+            if (mydata == "on") {
+                choice();
+
+            }
+            else {
+
+            }
+        }
+        function codeLatLng() {
+            geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    if (results[1]) {
+                        // alert("latlng="+latlng);
+                        document.getElementById("DivAddress").innerText = "媽媽最後位置:" + results[1].formatted_address;
+                    } else {
+                        // alert('No results found');
+                    }
+                } else {
+                    // alert('Geocoder failed due to: ' + status);
+                }
+            });
+        }
+        function savestus() {
+            var chk = document.getElementById("chkbabya");
+            var mydata = chk.value;
+            var oStorage = window.localStorage;
+            oStorage.mydata = mydata;
+        }
+        function logout() {
+            if (chkbabya.value == "off") {
+                location.href = "#confirm-dialog";
+            }
+        }
+        function out() {
+            if (pass.value != "0000") {
+                location.href = "#confirm-dialog1";
+            }
+            else {
+                window.location = "SA0010MF.html";
+            }
+        }
+        function pwd() {
+            $.ajax({
+                url: 'phpServerP.php',
+                type: 'get',
+                dataType: 'json',
+                data: { id: UID },
+                error: function () {
+                    //alert("GetGPSfromPHP ERROR");                
+                },
+                success: function (data) {
+                    password = data.password;
+                }
+            });
+        }
+    </script>
+</head>
+
+<body onload="tmp();">
+    <div data-role="page" id="page-02" data-theme="a">
+        <div data-role="header" data-theme="a">
+            <h1>寶寶定位追蹤</h1>
+            <a href="#confirm-dialog" class="ui-btn-right" data-role="button" data-icon="gear" data-iconpos="right" data-mini="true">登出</a>
+        </div>
+        <!-- /header -->
+        <div data-role="content" data-theme="a">
+
+            <div id="DivMap" style="width: inherit; height: 300px"></div>
+            <select name="select-choice-0" id="radius" onchange="choice();">
+                <option value="8">8公尺</option>
+                <option value="10000">10公里</option>
+            </select>
+            <!--
+    <audio id="music">
+    	<source src="Kalimba.mp3" type="audio/mp3">
+    </audio>  
+     -->
+            <div class="container" data-theme="a">
+                <table>
+                    <tr>
+                        <td style="text-align: right">啟動定位:</td>
+                        <td>
+                            <select name="slider" id="chkbabya" data-role="slider" onchange="savestus();choice();logout();pwd()">
+                                <option value="off">OFF</option>
+                                <option value="on">ON</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div data-role="footer" data-position="fixed" data-theme="a">
+            <h4>最後位置</h4>
+            <div>
+                <table>
+                    <tr>
+                        <td>
+                            <div id="DivAddress"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div data-role="dialog" id="confirm-dialog">
+        <script>
+            $('#confirm-dialog').on('pageshow', function () {
+                $('#pass').val('');
+            })
+        </script>
+
+        <div data-role="header">
+            <h1>Log out</h1>
+        </div>
+        <div data-role="content">
+            <p>請輸入密碼</p>
+            <input type="text" id="pass">
+        <a data-role="button" onclick="out();">登出</a>
+        </div>
+    </div>
+
+    <div data-role="dialog" id="confirm-dialog1">
+        <div data-role="header">
+            <h1>密碼錯誤</h1>
+        </div>
+        <div data-role="content">
+            <p>密碼錯誤</p>
+        </div>
+    </div>
+
+</body>
+</html>

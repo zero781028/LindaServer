@@ -55,9 +55,9 @@
             location.href = '#logout-dialog';
         }
         function myTest() {
-            //window.location = "Default.aspx";
-
-            window.location = "Default.aspx";
+            if (TxtPwd.value == "0000") {
+                window.location = "Default.aspx";
+            }
         }
     </script>
     <script src="Scripts/Rss2Content.js"></script>
