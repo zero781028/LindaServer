@@ -8,10 +8,10 @@
 //------------------------------------------------------------------------------
 
 namespace LindaServer {
-    
-    
+
+
     public partial class SA0020MF {
-        
+
         /// <summary>
         /// form1 控制項。
         /// </summary>
