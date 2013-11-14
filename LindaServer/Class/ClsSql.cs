@@ -44,9 +44,7 @@ namespace LindaServer.Class
         public string GetRsValue(string sql)
         {
             string result="";
-
-
-
+            
             return result;
         }
     }

@@ -11,7 +11,7 @@ namespace LindaServer
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            Response.Redirect("SA0020MF.aspx");
         }
     }
 }

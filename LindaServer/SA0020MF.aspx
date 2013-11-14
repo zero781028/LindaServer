@@ -2,32 +2,44 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head runat="server">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="Content/bootstrap-theme.min.css" rel="stylesheet" />
+    <script src="Scripts/jquery-1.9.1.min.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+    <title>JShitWeb</title>
 </head>
-<body style="background-color:#FFFFDF">
+<body style="background-color: #FFFFDF">
     <form id="form1" runat="server">
-        <table style="width: 100%;">
-            <tr>
-                <td style="text-align: right; font-size: large; font-weight: bold;">Name：</td>
-                <td>
-                    <asp:TextBox ID="TxtName" runat="server"></asp:TextBox>
-                </td>
-            </tr>
-            <tr>
-                <td style="text-align: right; font-size: large; font-weight: bold;">Phone：</td>
-                <td>
-                    <input type="text" /></td>
-            </tr>
-            <tr>
-                <td style="text-align: right; font-size: large; font-weight: bold;">Addr：</td>
-                <td>
-                    <input type="text" /></td>
-            </tr>
-        </table>
+        <header class="navbar navbar-inverse navbar-fixed-top" role="banner">
+            <div class="container">
+                <div class="navbar-header">
+                    <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a href="SA0020MF.aspx" class="navbar-brand">JShitWeb</a>
+                </div>
+                <nav class="collapse navbar-collapse" role="navigation">
+                    <ul class="nav navbar-nav">
+                        <li class="active">
+                            <a href="SA0020MF.aspx">Home</a>
+                        </li>
+                        <li>
+                            <a href="About.aspx">About</a>
+                        </li>
+                        <li>
+                            <a href="Contact.aspx">Contact</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
     </form>
-
 </body>
 </html>

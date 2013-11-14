@@ -8,10 +8,10 @@
 //------------------------------------------------------------------------------
 
 namespace LindaServer {
-
-
+    
+    
     public partial class SA0020MF {
-
+        
         /// <summary>
         /// form1 控制項。
         /// </summary>
@@ -20,14 +20,5 @@ namespace LindaServer {
         /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
-        
-        /// <summary>
-        /// TxtName 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TxtName;
     }
 }
